@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "657094305721",
+    "firebase_url": "https://simple-chat-92fb3.firebaseio.com",
+    "project_id": "simple-chat-92fb3",
+    "storage_bucket": "simple-chat-92fb3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657094305721:android:a2a6a7f3deb11e5f",
+        "android_client_info": {
+          "package_name": "com.zachtib.simplechat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "657094305721-jp21et41n67hkb4nbmds93rsfofva08b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zachtib.simplechat",
+            "certificate_hash": "48999354F44D095303C0F9E285CA6794FDBFF499"
+          }
+        },
+        {
+          "client_id": "657094305721-fclpiptep5n5m881vf5g5bj940tvs70h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBDoMQdm3Xb0d_FOuIz9MxdLsdzpRTrpw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "657094305721-fclpiptep5n5m881vf5g5bj940tvs70h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
