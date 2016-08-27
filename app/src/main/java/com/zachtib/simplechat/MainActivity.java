@@ -22,6 +22,11 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.zachtib.simplechat.model.User;
+
+import java.security.PrivilegedAction;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -37,6 +42,7 @@ public class MainActivity extends AppCompatActivity
 
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
+    private FirebaseDatabase mFirebaseDatabase;
     private FirebaseUser mFirebaseUser;
 
     // View instance variables
@@ -61,9 +67,32 @@ public class MainActivity extends AppCompatActivity
         mPhotoImageView = (ImageView) headerView.findViewById(R.id.photo_image_view);
 
         checkFirebaseAuthentication();
+        setupFirebaseDatabase();
+        writeNewUser();
     }
 
-    public void checkFirebaseAuthentication() {
+    private void setupFirebaseDatabase() {
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+    }
+
+    private void writeNewUser() {
+        DatabaseReference database = mFirebaseDatabase.getReference();
+
+        String userId = mFirebaseUser.getUid();
+
+        User user = new User(
+                mFirebaseUser.getDisplayName(),
+                mFirebaseUser.getEmail(),
+                mFirebaseUser.getPhotoUrl().toString());
+
+        database.child("users").child(userId).setValue(user);
+    }
+
+    private void getListOfChannels() {
+
+    }
+
+    private void checkFirebaseAuthentication() {
         // Set default username is anonymous.
         mUsername = ANONYMOUS;
 
@@ -76,6 +105,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             mUsername = mFirebaseUser.getDisplayName();
             mNameTextView.setText(mUsername);
+
             if (mFirebaseUser.getEmail() != null) {
                 mEmailTextView.setText(mFirebaseUser.getEmail());
             }
