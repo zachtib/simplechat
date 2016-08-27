@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setTitle(R.string.app_name);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
