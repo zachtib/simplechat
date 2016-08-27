@@ -5,6 +5,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.zachtib.simplechat.model.Channel;
 import com.zachtib.simplechat.model.User;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class DataLayer {
     private static DataLayer _instance;
 
@@ -29,5 +32,13 @@ public class DataLayer {
 
     public Channel[] getChannelsForUser(String uid) {
         return null;
+    }
+
+    public void createChannelForUsers(User user1, User user2) {
+        String key = mDatabaseReference.child("channels").push().getKey();
+        Channel channel = new Channel(key, "", Arrays.asList(user1, user2));
+
+        mDatabaseReference.child("channels").child(key).setValue(channel);
+
     }
 }

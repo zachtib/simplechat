@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity
     private TextView mEmailTextView;
     private ImageView mPhotoImageView;
 
+    // Dummy placeholder
+    private User mDummy;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +95,13 @@ public class MainActivity extends AppCompatActivity
                 photoUrl);
 
         mDataLayer.putUserInDatabase(user);
+
+        //Also make a dummy user
+        mDummy = new User("dummy", "Test User", "test@example.com", "");
+        mDataLayer.putUserInDatabase(mDummy);
+
+        // Now make a channel
+        mDataLayer.createChannelForUsers(user, mDummy);
     }
 
     private void getListOfChannels() {
