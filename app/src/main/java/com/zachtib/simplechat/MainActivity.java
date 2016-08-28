@@ -106,9 +106,6 @@ public class MainActivity extends AppCompatActivity
                 photoUrl);
 
         mDataLayer.putUserInDatabase(user);
-
-        // make a test chat
-        mDataLayer.startChannelWith(user, "test@example.com");
     }
 
     private void getListOfChannels() {
