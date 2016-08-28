@@ -1,17 +1,22 @@
 package com.zachtib.simplechat;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -34,7 +39,8 @@ import java.security.PrivilegedAction;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener {
     private static final String TAG = "MainActivity";
     public static final String ANONYMOUS = "anonymous";
 
@@ -57,6 +63,7 @@ public class MainActivity extends AppCompatActivity
     private ImageView mPhotoImageView;
 
     // Dummy placeholder
+    private User user;
     private User mDummy;
 
     @Override
@@ -76,10 +83,14 @@ public class MainActivity extends AppCompatActivity
         mEmailTextView = (TextView) headerView.findViewById(R.id.email_textview);
         mPhotoImageView = (ImageView) headerView.findViewById(R.id.photo_image_view);
 
+        ((FloatingActionButton) findViewById(R.id.fab)).setOnClickListener(this);
+
         checkFirebaseAuthentication();
         mDataLayer = DataLayer.getInstance();
-        writeNewUser();
-        getListOfChannels();
+        if (mFirebaseUser != null) {
+            writeNewUser();
+            getListOfChannels();
+        }
     }
 
     private void writeNewUser() {
@@ -89,19 +100,15 @@ public class MainActivity extends AppCompatActivity
             photoUrl = photoUri.toString();
         }
 
-        User user = new User(mFirebaseUser.getUid(),
+        user = new User(mFirebaseUser.getUid(),
                 mFirebaseUser.getDisplayName(),
                 mFirebaseUser.getEmail(),
                 photoUrl);
 
         mDataLayer.putUserInDatabase(user);
 
-        //Also make a dummy user
-        mDummy = new User("dummy", "Test User", "test@example.com", "");
-        mDataLayer.putUserInDatabase(mDummy);
-
-        // Now make a channel
-        mDataLayer.createChannelForUsers(user, mDummy);
+        // make a test chat
+        mDataLayer.startChannelWith(user, "test@example.com");
     }
 
     private void getListOfChannels() {
@@ -158,5 +165,33 @@ public class MainActivity extends AppCompatActivity
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.fab:
+                showNewChannelDialog();
+                break;
+        }
+    }
+
+    private void showNewChannelDialog() {
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("New Chat")
+                .setMessage("Enter the email address of the person you want to chat with")
+                .setView(input)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String email = String.valueOf(input.getText());
+                        mDataLayer.startChannelWith(user, email);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+        dialog.show();
     }
 }
