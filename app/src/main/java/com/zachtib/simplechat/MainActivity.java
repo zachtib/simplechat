@@ -11,6 +11,8 @@ import android.support.design.widget.NavigationView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -33,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.zachtib.simplechat.adapter.ChatAdapter;
 import com.zachtib.simplechat.adapter.UserAdapter;
 import com.zachtib.simplechat.data.DataLayer;
 import com.zachtib.simplechat.model.Channel;
@@ -68,10 +72,14 @@ public class MainActivity extends AppCompatActivity
     private TextView mNameTextView;
     private TextView mEmailTextView;
     private ImageView mPhotoImageView;
+    private RecyclerView mChatRecyclerView;
+
 
     // Dummy placeholder
     private User mUser;
     private User mDummy;
+
+    private FirebaseRecyclerAdapter<Chat, ChatAdapter.ChatViewHolder> mChatAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,16 +97,17 @@ public class MainActivity extends AppCompatActivity
         mNameTextView = (TextView) headerView.findViewById(R.id.name_textview);
         mEmailTextView = (TextView) headerView.findViewById(R.id.email_textview);
         mPhotoImageView = (ImageView) headerView.findViewById(R.id.photo_image_view);
+        mChatRecyclerView = (RecyclerView) findViewById(R.id.chat_list);
 
-        ((FloatingActionButton) findViewById(R.id.fab)).setOnClickListener(this);
+        findViewById(R.id.fab).setOnClickListener(this);
 
         checkFirebaseAuthentication();
         mDataLayer = DataLayer.getInstance();
+        setupDatabase();
         if (mFirebaseUser != null) {
             writeNewUser();
             getListOfChannels();
         }
-        setupDatabase();
     }
 
     private void setupDatabase() {
@@ -121,7 +130,32 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getListOfChannels() {
-        Channel[] channels = mDataLayer.getChannelsForUser(mFirebaseUser.getUid());
+        mChatAdapter = new FirebaseRecyclerAdapter<Chat, ChatAdapter.ChatViewHolder>(
+                Chat.class,
+                R.layout.item_chat,
+                ChatAdapter.ChatViewHolder.class,
+                mDatabaseReference.child("users").child(mUser.uid).child("chats")) {
+            @Override
+            protected void populateViewHolder(ChatAdapter.ChatViewHolder viewHolder, Chat model, int position) {
+                viewHolder.messageTextView.setText(model.name);
+                if (model.photoUrl != null) {
+                    Glide.with(MainActivity.this)
+                            .load(model.photoUrl)
+                            .into(viewHolder.messengerImageView);
+                }
+            }
+        };
+        mChatAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                int chatCount = mChatAdapter.getItemCount();
+
+            }
+        });
+
+        mChatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mChatRecyclerView.setAdapter(mChatAdapter);
     }
 
     private void checkFirebaseAuthentication() {
@@ -217,7 +251,7 @@ public class MainActivity extends AppCompatActivity
                         List<User> results = new ArrayList<>();
                         for (DataSnapshot snap : dataSnapshot.getChildren()) {
                             User u = snap.getValue(User.class);
-                            if (u.uid != mUser.uid) {
+                            if (!u.uid.equals(mUser.uid)) {
                                 results.add(u);
                             }
                         }
