@@ -36,6 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.zachtib.simplechat.adapter.UserAdapter;
 import com.zachtib.simplechat.data.DataLayer;
 import com.zachtib.simplechat.model.Channel;
+import com.zachtib.simplechat.model.Chat;
 import com.zachtib.simplechat.model.User;
 
 import java.util.ArrayList;
@@ -244,6 +245,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void createChatWithUser(User user) {
+        Log.d(TAG, "Creating a chat with " + user.username);
 
+        String id = mDatabaseReference.child("chats").push().getKey();
+        String name = mUsername + " to " + user.username;
+
+        mDatabaseReference.child("chats").child(id).setValue(new Chat(id, name));
+        mDatabaseReference.child("users").child(mUser.uid).child("chats").child(id)
+                .setValue(new Chat(id, user.username));
+        mDatabaseReference.child("users").child(user.uid).child("chats").child(id)
+                .setValue(new Chat(id, mUser.username));
     }
 }
