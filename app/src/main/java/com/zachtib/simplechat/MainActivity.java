@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity
         switch (view.getId()) {
             case R.id.fab:
                 //showNewChannelDialog();
-                getAllUsers();
+                getAllUsersNotMe();
                 break;
         }
     }
@@ -209,14 +209,17 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void getAllUsers() {
+    private void getAllUsersNotMe() {
         mDatabaseReference.child("users")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         List<User> results = new ArrayList<>();
                         for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                            results.add(snap.getValue(User.class));
+                            User u = snap.getValue(User.class);
+                            if (u.uid != mUser.uid) {
+                                results.add(u);
+                            }
                         }
                         showUserSelectionDialog(results);
                     }
@@ -250,10 +253,10 @@ public class MainActivity extends AppCompatActivity
         String id = mDatabaseReference.child("chats").push().getKey();
         String name = mUsername + " to " + user.username;
 
-        mDatabaseReference.child("chats").child(id).setValue(new Chat(id, name));
+        mDatabaseReference.child("chats").child(id).setValue(new Chat(id, name, null));
         mDatabaseReference.child("users").child(mUser.uid).child("chats").child(id)
-                .setValue(new Chat(id, user.username));
+                .setValue(new Chat(id, user));
         mDatabaseReference.child("users").child(user.uid).child("chats").child(id)
-                .setValue(new Chat(id, mUser.username));
+                .setValue(new Chat(id, mUser));
     }
 }
