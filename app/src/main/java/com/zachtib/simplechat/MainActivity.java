@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,18 +28,24 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.zachtib.simplechat.adapter.UserAdapter;
 import com.zachtib.simplechat.data.DataLayer;
 import com.zachtib.simplechat.model.Channel;
 import com.zachtib.simplechat.model.User;
 
-import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
+
     private static final String TAG = "MainActivity";
     public static final String ANONYMOUS = "anonymous";
 
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseUser mFirebaseUser;
 
     private DataLayer mDataLayer;
+    private DatabaseReference mDatabaseReference;
 
     // View instance variables
     private ListView mDrawerList;
@@ -63,7 +69,7 @@ public class MainActivity extends AppCompatActivity
     private ImageView mPhotoImageView;
 
     // Dummy placeholder
-    private User user;
+    private User mUser;
     private User mDummy;
 
     @Override
@@ -91,6 +97,11 @@ public class MainActivity extends AppCompatActivity
             writeNewUser();
             getListOfChannels();
         }
+        setupDatabase();
+    }
+
+    private void setupDatabase() {
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     private void writeNewUser() {
@@ -100,12 +111,12 @@ public class MainActivity extends AppCompatActivity
             photoUrl = photoUri.toString();
         }
 
-        user = new User(mFirebaseUser.getUid(),
+        mUser = new User(mFirebaseUser.getUid(),
                 mFirebaseUser.getDisplayName(),
                 mFirebaseUser.getEmail(),
                 photoUrl);
 
-        mDataLayer.putUserInDatabase(user);
+        mDataLayer.putUserInDatabase(mUser);
     }
 
     private void getListOfChannels() {
@@ -168,7 +179,8 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fab:
-                showNewChannelDialog();
+                //showNewChannelDialog();
+                getAllUsers();
                 break;
         }
     }
@@ -176,7 +188,7 @@ public class MainActivity extends AppCompatActivity
     private void showNewChannelDialog() {
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        AlertDialog dialog = new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setTitle("New Chat")
                 .setMessage("Enter the email address of the person you want to chat with")
                 .setView(input)
@@ -184,11 +196,54 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String email = String.valueOf(input.getText());
-                        mDataLayer.startChannelWith(user, email);
+                        searchForUsers(email);
                     }
                 })
                 .setNegativeButton("Cancel", null)
-                .create();
-        dialog.show();
+                .create()
+                .show();
+    }
+
+    private void searchForUsers(String email) {
+
+    }
+
+    private void getAllUsers() {
+        mDatabaseReference.child("users")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<User> results = new ArrayList<>();
+                        for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                            results.add(snap.getValue(User.class));
+                        }
+                        showUserSelectionDialog(results);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e(TAG, databaseError.getMessage());
+                    }
+                });
+    }
+
+    private void showUserSelectionDialog(final List<User> users) {
+        UserAdapter adapter = new UserAdapter(MainActivity.this, users);
+        new AlertDialog.Builder(this)
+                .setTitle("Select User")
+                .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.d(TAG, "Pressed " + i);
+                        createChatWithUser(users.get(i));
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
+    private void createChatWithUser(User user) {
+
     }
 }

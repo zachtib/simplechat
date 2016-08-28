@@ -20,4 +20,9 @@ public class User {
         this.email = email;
         this.photoUrl = photoUrl;
     }
+
+    @Override
+    public String toString() {
+        return this.username;
+    }
 }
