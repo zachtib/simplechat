@@ -3,7 +3,7 @@ package com.zachtib.simplechat.model;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class User {
+public class User extends BaseModel {
 
     public String uid;
     public String username;

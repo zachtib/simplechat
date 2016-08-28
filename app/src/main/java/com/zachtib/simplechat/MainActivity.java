@@ -44,7 +44,9 @@ import com.zachtib.simplechat.model.Chat;
 import com.zachtib.simplechat.model.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -126,7 +128,11 @@ public class MainActivity extends AppCompatActivity
                 mFirebaseUser.getEmail(),
                 photoUrl);
 
-        mDataLayer.putUserInDatabase(mUser);
+        DatabaseReference userRef = mDatabaseReference
+                .child("users")
+                .child(mUser.uid);
+
+        userRef.updateChildren(mUser.getMapping());
     }
 
     private void getListOfChannels() {

@@ -35,42 +35,4 @@ public class DataLayer {
         mDatabaseReference.child("users").child(user.uid).setValue(user);
     }
 
-    public Channel[] getChannelsForUser(String uid) {
-        return null;
-    }
-
-    public void createChannelForUsers(User user1, User user2) {
-        String key = mDatabaseReference.child("channels").push().getKey();
-        String name = String.format("%s and %s", user1.username, user2.username);
-        Channel channel = new Channel(key, name, Arrays.asList(user1, user2));
-
-        mDatabaseReference.child("channels").child(key).setValue(channel);
-        addChannelToUser(channel, user1);
-        addChannelToUser(channel, user2);
-
-    }
-
-    private void addChannelToUser(Channel channel, User user) {
-        mDatabaseReference.child("users").child(user.uid).child("channels")
-                .child(channel.channelId).setValue(channel);
-    }
-
-    public void startChannelWith(User owner, String email) {
-        final User ownerRef = owner;
-        mDatabaseReference.child("users").orderByChild("email").equalTo(email).limitToFirst(1)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                            User result = snap.getValue(User.class);
-                            createChannelForUsers(ownerRef, result);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-    }
 }
