@@ -3,6 +3,7 @@ package com.zachtib.simplechat.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +11,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.zachtib.simplechat.R;
 import com.zachtib.simplechat.presenter.IConversationPresenter;
+
+import javax.inject.Inject;
 
 public class ConversationView extends Fragment implements IConversationView {
 
     private RecyclerView mMessageRecyclerView;
     private Button mSendButton;
     private EditText mEditText;
-    private IConversationPresenter mPresenter;
+    IConversationPresenter mPresenter;
+
+    @Inject
+    FirebaseDatabase mFirebaseDatabase;
 
     public ConversationView() {
         // Required empty public constructor
@@ -34,6 +41,7 @@ public class ConversationView extends Fragment implements IConversationView {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_conversation_view, container, false);
         mMessageRecyclerView = (RecyclerView) view.findViewById(R.id.message_list);
+        mMessageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mEditText = (EditText) view.findViewById(R.id.messageEditText);
 
         mSendButton = (Button) view.findViewById(R.id.sendButton);

@@ -1,5 +1,7 @@
 package com.zachtib.simplechat.presenter;
 
+import android.support.v7.widget.RecyclerView;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -10,21 +12,20 @@ import com.zachtib.simplechat.view.IConversationView;
 
 public class ConversationPresenter implements IConversationPresenter {
 
-    private IConversationView mConversationView;
+    IConversationView mConversationView;
 
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mDatabaseReference;
 
     private String mChatId;
 
-    public ConversationPresenter(String chatId) {
-        mChatId = chatId;
+    public ConversationPresenter(FirebaseAuth auth, FirebaseDatabase database) {
+        mFirebaseUser = auth.getCurrentUser();
+        mDatabaseReference = database.getReference();
     }
 
     @Override
     public void onCreate() {
-        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -47,6 +48,12 @@ public class ConversationPresenter implements IConversationPresenter {
         mConversationView = view;
         MessageAdapter adapter = new MessageAdapter(mConversationView.getContext(),
                 mDatabaseReference.child("messages").child(mChatId));
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+            }
+        });
         view.getMessageRecyclerView().setAdapter(adapter);
     }
 
@@ -68,5 +75,10 @@ public class ConversationPresenter implements IConversationPresenter {
         mDatabaseReference.child("messages").child(mChatId)
                 .push().setValue(msg);
         mConversationView.clearMessageInput();
+    }
+
+    @Override
+    public void setChatId(String id) {
+        mChatId = id;
     }
 }
