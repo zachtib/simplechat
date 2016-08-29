@@ -13,6 +13,8 @@ import android.widget.EditText;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.zachtib.simplechat.adapter.MessageAdapter;
@@ -23,12 +25,15 @@ public class ConversationActivity extends AppCompatActivity {
     private String mChatId;
     private String mChatName;
 
+    private FirebaseUser mFirebaseUser;
     private DatabaseReference mDatabaseReference;
     private FirebaseRecyclerAdapter<Message, MessageAdapter.MessageViewHolder> mMessageAdapter;
 
     private RecyclerView mMessageRecyclerView;
     private EditText mEditText;
     private Button mSendButton;
+
+    private String mPhotoUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +66,11 @@ public class ConversationActivity extends AppCompatActivity {
         mChatName = extras.getString("CHAT_NAME");
 
         getSupportActionBar().setTitle(mChatName);
+
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (mFirebaseUser.getPhotoUrl() != null) {
+            mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+        }
 
         // Subscribe to database updates for this conversation
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -97,8 +107,10 @@ public class ConversationActivity extends AppCompatActivity {
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Message message = new Message("Test User", mEditText.getText().toString(),
-                        ""); // TODO
+                Message message = new Message(
+                        mFirebaseUser.getDisplayName(),
+                        mEditText.getText().toString(),
+                        mPhotoUrl); // TODO
                 mDatabaseReference.child("messages").child(mChatId)
                         .push().setValue(message);
                 mEditText.setText("");
