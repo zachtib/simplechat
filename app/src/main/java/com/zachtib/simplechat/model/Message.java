@@ -1,9 +1,14 @@
 package com.zachtib.simplechat.model;
 
+import com.google.firebase.database.ServerValue;
+
+import java.util.Map;
+
 public class Message extends BaseModel {
     public String sender;
     public String text;
     public String profilePhotoUrl;
+    public Object timeStamp;
 
     public Message() {
 
@@ -13,5 +18,6 @@ public class Message extends BaseModel {
         this.sender = sender;
         this.text = text;
         this.profilePhotoUrl = profilePhotoUrl;
+        this.timeStamp = ServerValue.TIMESTAMP;
     }
 }

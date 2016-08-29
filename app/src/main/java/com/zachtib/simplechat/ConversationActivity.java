@@ -20,6 +20,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.zachtib.simplechat.adapter.MessageAdapter;
 import com.zachtib.simplechat.model.Message;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class ConversationActivity extends AppCompatActivity {
 
     private String mChatId;
@@ -82,8 +86,14 @@ public class ConversationActivity extends AppCompatActivity {
         ) {
             @Override
             protected void populateViewHolder(MessageAdapter.MessageViewHolder viewHolder, Message model, int position) {
+                String dt = "";
+                if (model.timeStamp != null) {
+                    DateFormat df = new SimpleDateFormat("MMM dd h:mm a");
+                    dt = " - " + df.format(new Date((long)model.timeStamp));
+                }
+
                 viewHolder.messageTextView.setText(model.text);
-                viewHolder.messengerTextView.setText(model.sender);
+                viewHolder.messengerTextView.setText(model.sender + dt);
                 if (model.profilePhotoUrl != null) {
                     Glide.with(ConversationActivity.this)
                             .load(model.profilePhotoUrl)
