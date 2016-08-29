@@ -153,6 +153,7 @@ public class MainActivity extends AppCompatActivity
 
                          Intent intent = new Intent(getBaseContext(), ConversationActivity.class);
                          intent.putExtra("CHAT_ID", viewHolder.chatId);
+                         intent.putExtra("CHAT_NAME", viewHolder.messageTextView.getText());
                          startActivity(intent);
                      }
                  });
