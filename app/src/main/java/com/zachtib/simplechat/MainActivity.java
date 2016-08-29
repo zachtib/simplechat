@@ -142,8 +142,21 @@ public class MainActivity extends AppCompatActivity
                 ChatAdapter.ChatViewHolder.class,
                 mDatabaseReference.child("users").child(mUser.uid).child("chats")) {
             @Override
-            protected void populateViewHolder(ChatAdapter.ChatViewHolder viewHolder, Chat model, int position) {
+            protected void populateViewHolder(final ChatAdapter.ChatViewHolder viewHolder, Chat model, int position) {
                 viewHolder.messageTextView.setText(model.name);
+                viewHolder.messengerTextView.setText(model.id);
+                viewHolder.chatId = model.id;
+                 viewHolder.getView().setOnClickListener(new View.OnClickListener() {
+                     @Override
+                     public void onClick(View view) {
+                         Log.d(TAG, "Pressed conversation with id " + viewHolder.chatId);
+
+                         Intent intent = new Intent(getBaseContext(), ConversationActivity.class);
+                         intent.putExtra("CHAT_ID", viewHolder.chatId);
+                         startActivity(intent);
+                     }
+                 });
+
                 if (model.photoUrl != null) {
                     Glide.with(MainActivity.this)
                             .load(model.photoUrl)
@@ -156,12 +169,13 @@ public class MainActivity extends AppCompatActivity
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
                 int chatCount = mChatAdapter.getItemCount();
-
             }
         });
 
         mChatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mChatRecyclerView.setAdapter(mChatAdapter);
+
+
     }
 
     private void checkFirebaseAuthentication() {
