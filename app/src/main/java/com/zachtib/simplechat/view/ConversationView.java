@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.zachtib.simplechat.ConversationActivity;
 import com.zachtib.simplechat.R;
 import com.zachtib.simplechat.SimpleChat;
 import com.zachtib.simplechat.adapter.MessageAdapter;
