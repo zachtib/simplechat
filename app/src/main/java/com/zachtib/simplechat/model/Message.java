@@ -2,8 +2,6 @@ package com.zachtib.simplechat.model;
 
 import com.google.firebase.database.ServerValue;
 
-import java.util.Map;
-
 public class Message extends BaseModel {
     public String sender;
     public String text;

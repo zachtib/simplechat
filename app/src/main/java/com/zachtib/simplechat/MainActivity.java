@@ -4,13 +4,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -39,14 +38,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.zachtib.simplechat.adapter.ChatAdapter;
 import com.zachtib.simplechat.adapter.UserAdapter;
 import com.zachtib.simplechat.data.DataLayer;
-import com.zachtib.simplechat.model.Channel;
 import com.zachtib.simplechat.model.Chat;
 import com.zachtib.simplechat.model.User;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,

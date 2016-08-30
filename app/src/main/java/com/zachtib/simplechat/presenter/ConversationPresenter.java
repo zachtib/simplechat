@@ -1,7 +1,5 @@
 package com.zachtib.simplechat.presenter;
 
-import android.support.v7.widget.RecyclerView;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;

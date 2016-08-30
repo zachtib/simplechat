@@ -3,13 +3,6 @@ package com.zachtib.simplechat;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
-import com.zachtib.simplechat.presenter.ConversationPresenter;
-import com.zachtib.simplechat.view.ConversationView;
-
-import javax.inject.Inject;
-
 public class ConversationActivity extends AppCompatActivity {
 
     @Override
@@ -20,6 +13,8 @@ public class ConversationActivity extends AppCompatActivity {
         if (extras == null) {
             finish();
         }
+
+        getSupportActionBar().setTitle("test");
 
         setContentView(R.layout.activity_conversation);
 
