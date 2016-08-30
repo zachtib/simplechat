@@ -11,21 +11,10 @@ import com.zachtib.simplechat.view.ConversationView;
 import javax.inject.Inject;
 
 public class ConversationActivity extends AppCompatActivity {
-    @Inject ConversationPresenter mPresenter;
-    ConversationView mView;
-
-    @Inject
-    FirebaseDatabase database;
-
-    @Inject
-    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        ((SimpleChat) getApplication()).getAppComponent().inject(this);
-
         // Get extra information
         Bundle extras = getIntent().getExtras();
         if (extras == null) {
@@ -33,13 +22,6 @@ public class ConversationActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_conversation);
-
-        mView = (ConversationView) getSupportFragmentManager()
-                .findFragmentById(R.id.conversation_fragment);
-
-        mView.attachPresenter(mPresenter);
-        mPresenter.setChatId(extras.getString("CHAT_ID"));
-        mPresenter.attachView(mView);
 
     }
 

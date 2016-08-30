@@ -5,7 +5,7 @@ import android.app.Application;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.zachtib.simplechat.presenter.ConversationPresenter;
-import com.zachtib.simplechat.view.ConversationView;
+import com.zachtib.simplechat.presenter.IConversationPresenter;
 
 import javax.inject.Singleton;
 
@@ -39,7 +39,7 @@ public class AppModule {
     }
 
     @Provides
-    ConversationPresenter provideConversationPresenter(FirebaseAuth auth, FirebaseDatabase database) {
+    IConversationPresenter provideConversationPresenter(FirebaseAuth auth, FirebaseDatabase database) {
         return new ConversationPresenter(auth, database);
     }
 

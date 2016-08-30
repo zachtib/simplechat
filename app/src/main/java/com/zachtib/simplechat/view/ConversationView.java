@@ -2,6 +2,7 @@ package com.zachtib.simplechat.view;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,8 @@ import android.widget.EditText;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.zachtib.simplechat.R;
+import com.zachtib.simplechat.SimpleChat;
+import com.zachtib.simplechat.adapter.MessageAdapter;
 import com.zachtib.simplechat.presenter.IConversationPresenter;
 
 import javax.inject.Inject;
@@ -25,17 +28,21 @@ public class ConversationView extends Fragment implements IConversationView {
     @BindView(R.id.message_list) RecyclerView mMessageRecyclerView;
     @BindView(R.id.sendButton) Button mSendButton;
     @BindView(R.id.messageEditText) EditText mEditText;
-    IConversationPresenter mPresenter;
-
-    @Inject
-    FirebaseDatabase mFirebaseDatabase;
+    @Inject IConversationPresenter mPresenter;
 
     public ConversationView() {
         // Required empty public constructor
     }
 
-    public void attachPresenter(IConversationPresenter presenter) {
-        mPresenter = presenter;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        ((SimpleChat) getActivity().getApplication()).getAppComponent().inject(this);
+        Bundle extras = getActivity().getIntent().getExtras();
+        if (extras != null) {
+            mPresenter.setChatId(extras.getString("CHAT_ID"));
+        }
     }
 
     @Override
@@ -46,7 +53,6 @@ public class ConversationView extends Fragment implements IConversationView {
 
         ButterKnife.bind(this, view);
 
-        mMessageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,17 +65,31 @@ public class ConversationView extends Fragment implements IConversationView {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.attachView(this);
+        mPresenter.onResume();
+    }
+
+    @Override
     public String getMessageInputContents() {
         return mEditText.getText().toString();
     }
 
     @Override
-    public RecyclerView getMessageRecyclerView() {
-        return mMessageRecyclerView;
+    public void clearMessageInput() {
+        mEditText.setText("");
     }
 
     @Override
-    public void clearMessageInput() {
-        mEditText.setText("");
+    public void attachMessageAdapter(MessageAdapter adapter) {
+        mMessageRecyclerView.setAdapter(adapter);
+        mMessageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 }

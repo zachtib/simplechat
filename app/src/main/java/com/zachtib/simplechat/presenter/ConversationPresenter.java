@@ -16,7 +16,6 @@ public class ConversationPresenter implements IConversationPresenter {
 
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mDatabaseReference;
-
     private String mChatId;
 
     public ConversationPresenter(FirebaseAuth auth, FirebaseDatabase database) {
@@ -25,36 +24,20 @@ public class ConversationPresenter implements IConversationPresenter {
     }
 
     @Override
-    public void onCreate() {
-    }
-
-    @Override
-    public void onStart() {
-
-    }
-
-    @Override
-    public void onStop() {
-
-    }
-
-    @Override
     public void onPause() {
 
     }
 
     @Override
+    public void onResume() {
+        mConversationView.attachMessageAdapter(new MessageAdapter(mConversationView.getContext(),
+                mDatabaseReference.child("messages").child(mChatId)));
+    }
+
+    @Override
     public void attachView(IConversationView view) {
         mConversationView = view;
-        MessageAdapter adapter = new MessageAdapter(mConversationView.getContext(),
-                mDatabaseReference.child("messages").child(mChatId));
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                super.onItemRangeInserted(positionStart, itemCount);
-            }
-        });
-        view.getMessageRecyclerView().setAdapter(adapter);
+
     }
 
     private String getPhotoUrl() {
@@ -80,5 +63,6 @@ public class ConversationPresenter implements IConversationPresenter {
     @Override
     public void setChatId(String id) {
         mChatId = id;
+
     }
 }
