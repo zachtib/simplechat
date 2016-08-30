@@ -17,11 +17,14 @@ import com.zachtib.simplechat.presenter.IConversationPresenter;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ConversationView extends Fragment implements IConversationView {
 
-    private RecyclerView mMessageRecyclerView;
-    private Button mSendButton;
-    private EditText mEditText;
+    @BindView(R.id.message_list) RecyclerView mMessageRecyclerView;
+    @BindView(R.id.sendButton) Button mSendButton;
+    @BindView(R.id.messageEditText) EditText mEditText;
     IConversationPresenter mPresenter;
 
     @Inject
@@ -40,11 +43,10 @@ public class ConversationView extends Fragment implements IConversationView {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_conversation_view, container, false);
-        mMessageRecyclerView = (RecyclerView) view.findViewById(R.id.message_list);
-        mMessageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mEditText = (EditText) view.findViewById(R.id.messageEditText);
 
-        mSendButton = (Button) view.findViewById(R.id.sendButton);
+        ButterKnife.bind(this, view);
+
+        mMessageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-// add after applying plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
@@ -49,6 +48,10 @@ dependencies {
     apt 'com.google.dagger:dagger-compiler:2.5'
     compile 'com.google.dagger:dagger:2.5'
     provided 'javax.annotation:jsr250-api:1.0'
+
+    // Butterknife
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
