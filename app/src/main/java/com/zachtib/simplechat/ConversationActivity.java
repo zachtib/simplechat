@@ -17,6 +17,8 @@ public class ConversationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_conversation);
         ButterKnife.bind(this);
 
+        mToolbar.setDisplayHomeAsUpEnabled(true);
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             mToolbar.setTitle(extras.getString("CHAT_NAME"));
