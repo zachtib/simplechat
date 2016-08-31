@@ -29,8 +29,4 @@ public class ConversationActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
     }
-
-    public void setActionBarTitle(String title) {
-        getSupportActionBar().setTitle(title);
-    }
 }
