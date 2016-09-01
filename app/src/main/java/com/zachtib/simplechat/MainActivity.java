@@ -37,7 +37,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.zachtib.simplechat.adapter.ChatAdapter;
 import com.zachtib.simplechat.adapter.UserAdapter;
-import com.zachtib.simplechat.data.DataLayer;
 import com.zachtib.simplechat.model.Chat;
 import com.zachtib.simplechat.model.User;
 
@@ -62,7 +61,6 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
 
-    private DataLayer mDataLayer;
     private DatabaseReference mDatabaseReference;
 
     // View instance variables
@@ -100,7 +98,6 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.fab).setOnClickListener(this);
 
         checkFirebaseAuthentication();
-        mDataLayer = DataLayer.getInstance();
         setupDatabase();
         if (mFirebaseUser != null) {
             writeNewUser();

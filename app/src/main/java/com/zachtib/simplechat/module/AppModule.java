@@ -4,7 +4,9 @@ import android.app.Application;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.zachtib.simplechat.presenter.ChannelListPresenter;
 import com.zachtib.simplechat.presenter.ConversationPresenter;
+import com.zachtib.simplechat.presenter.IChannelListPresenter;
 import com.zachtib.simplechat.presenter.IConversationPresenter;
 
 import javax.inject.Singleton;
@@ -41,6 +43,11 @@ public class AppModule {
     @Provides
     IConversationPresenter provideConversationPresenter(FirebaseAuth auth, FirebaseDatabase database) {
         return new ConversationPresenter(auth, database);
+    }
+
+    @Provides
+    IChannelListPresenter provideChannelListPresenter() {
+        return new ChannelListPresenter();
     }
 
 }
