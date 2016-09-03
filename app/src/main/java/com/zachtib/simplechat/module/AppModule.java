@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.zachtib.simplechat.data.FirebaseAuthenticator;
+import com.zachtib.simplechat.interfaces.IAuthenticator;
 import com.zachtib.simplechat.presenter.ChannelListPresenter;
 import com.zachtib.simplechat.presenter.ConversationPresenter;
 import com.zachtib.simplechat.presenter.IChannelListPresenter;
@@ -48,6 +50,11 @@ public class AppModule {
     @Provides
     IChannelListPresenter provideChannelListPresenter() {
         return new ChannelListPresenter();
+    }
+
+    @Provides
+    IAuthenticator provideAuthenticator(FirebaseAuth auth) {
+        return new FirebaseAuthenticator(auth);
     }
 
 }
